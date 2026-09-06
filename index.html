@@ -9,18 +9,22 @@
 :root{
   --bg:#0b1220;--panel:#111827;--panel2:#182235;--text:#f8fafc;--muted:#9ca3af;
   --accent:#f59e0b;--accent2:#fbbf24;--good:#22c55e;--bad:#ef4444;
-  --p1:#ef4444;--p2:#3b82f6;--p3:#22c55e;--p4:#eab308;
+  --p1:#ef4444;--p2:#3b82f6;--p3:#22c55e;--p4:#facc15;
+  --p1soft:#fca5a5;--p2soft:#93c5fd;--p3soft:#86efac;--p4soft:#fde68a;
+  --board:#f7f4ec;--line:#dacfb9;--shadow:rgba(0,0,0,.22);
 }
 *{box-sizing:border-box}
 body{
   margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:var(--text);background:radial-gradient(circle at top,rgba(245,158,11,.12),transparent 32rem),linear-gradient(180deg,#080d16,var(--bg));
+  color:var(--text);
+  background:radial-gradient(circle at top,rgba(245,158,11,.12),transparent 32rem),linear-gradient(180deg,#080d16,var(--bg));
   display:flex;justify-content:center;padding:20px 12px 40px;
 }
-.game{width:min(1100px,100%)}
+.game{width:min(1120px,100%)}
 header{text-align:center;margin-bottom:14px}
 h1{margin:0;font-size:clamp(2rem,7vw,4.2rem);line-height:1;text-transform:uppercase;letter-spacing:.03em}
 .subtitle{color:var(--muted);margin-top:8px}
+
 .setup{
   display:grid;grid-template-columns:minmax(180px,.7fr) minmax(0,1.3fr) auto;gap:12px;align-items:start;
   background:rgba(17,24,39,.82);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;margin-bottom:14px
@@ -52,40 +56,80 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
 .pstatus{font-size:.72rem;color:var(--muted);min-height:1em;margin-top:2px}
 .phome{font-size:1.45rem;font-weight:900;margin-top:2px}
 
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px;align-items:start}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;align-items:start}
 .board-shell{
   background:linear-gradient(145deg,#4f2f16,#2e1b0d);border:7px solid #7b4c25;border-radius:24px;padding:14px;
   box-shadow:inset 0 0 0 3px rgba(255,255,255,.05),0 22px 60px rgba(0,0,0,.32)
 }
-.board-wrap{position:relative;aspect-ratio:1;max-width:760px;margin:auto}
+.board-wrap{position:relative;aspect-ratio:1;max-width:780px;margin:auto}
 .board{
   width:100%;height:100%;display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);
-  gap:2px;background:#332313;padding:2px;border-radius:14px;overflow:hidden
+  gap:3px;background:#c7b89f;padding:10px;border-radius:20px;overflow:hidden;
+  box-shadow:inset 0 0 0 8px #efe7d6, inset 0 0 0 10px #ccb793;
 }
 .cell{
-  position:relative;background:#ede3cb;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;
-  font-size:clamp(.52rem,1.25vw,.82rem);color:#47351f;user-select:none
+  position:relative;background:var(--board);min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;
+  color:#47351f;user-select:none;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(124,96,58,.08)
 }
-.cell.track{background:#f0e7d3}
-.cell.safe{box-shadow:inset 0 0 0 3px rgba(245,158,11,.45)}
+.cell.track{background:#fffdfa}
+.cell.track::before{
+  content:"";width:58%;aspect-ratio:1;border-radius:50%;background:#f4ede1;box-shadow:inset 0 0 0 1px rgba(90,70,43,.14)
+}
+.cell.track.red::before{background:var(--p1soft)}
+.cell.track.blue::before{background:var(--p2soft)}
+.cell.track.green::before{background:var(--p3soft)}
+.cell.track.yellow::before{background:var(--p4soft)}
+.cell.track.start-spot::before{
+  width:70%;background:linear-gradient(180deg,#fff,rgba(255,255,255,.72));
+  box-shadow:inset 0 0 0 3px rgba(245,158,11,.7),0 0 0 1px rgba(126,93,38,.18)
+}
+.cell.track.start-spot::after{
+  content:"★";position:absolute;font-size:clamp(.65rem,1.2vw,.95rem);font-weight:900;color:#7c5e1f;z-index:1
+}
+.cell.lane{font-size:clamp(.52rem,1.1vw,.8rem);font-weight:900;letter-spacing:.03em}
+.cell.lane.red{background:linear-gradient(180deg,#fff,#ffe0e0)}
+.cell.lane.blue{background:linear-gradient(180deg,#fff,#dfeaff)}
+.cell.lane.green{background:linear-gradient(180deg,#fff,#e2fbe9)}
+.cell.lane.yellow{background:linear-gradient(180deg,#fff,#fff2c4)}
+.cell.lane::before{
+  content:"";position:absolute;width:42%;height:42%;border-radius:12px;background:rgba(255,255,255,.5);opacity:.55
+}
+.cell.lane .lane-arrow{position:absolute;font-size:clamp(.7rem,1.4vw,1rem);opacity:.75}
 .cell.center{
-  background:radial-gradient(circle,#26334a,#121a29);color:#fff;text-align:center;padding:8px;flex-direction:column
+  background:radial-gradient(circle,#2a3954,#162033);color:#fff;text-align:center;padding:8px;flex-direction:column;
+  box-shadow:none
 }
-.center-title{font-size:clamp(.85rem,2vw,1.35rem);font-weight:900;text-transform:uppercase}
-.center-sub{font-size:clamp(.55rem,1vw,.75rem);color:#cbd5e1;margin-top:4px}
-.start-zone,.home-zone{font-weight:900;color:white;text-shadow:0 1px 2px rgba(0,0,0,.45)}
-.p1bg{background:rgba(239,68,68,.78)} .p2bg{background:rgba(59,130,246,.78)}
-.p3bg{background:rgba(34,197,94,.78)} .p4bg{background:rgba(234,179,8,.82);color:#221a00;text-shadow:none}
+.center-title{font-size:clamp(.82rem,1.9vw,1.35rem);font-weight:900;text-transform:uppercase;line-height:1.05}
+.center-sub{font-size:clamp(.5rem,.95vw,.74rem);color:#d8e0ee;margin-top:4px}
+
+.cell.start-area{
+  border-radius:18px;box-shadow:inset 0 0 0 3px rgba(255,255,255,.78), inset 0 0 0 5px rgba(0,0,0,.05)
+}
+.cell.start-area.red{background:linear-gradient(180deg,#f87171,#ef4444)}
+.cell.start-area.blue{background:linear-gradient(180deg,#60a5fa,#3b82f6)}
+.cell.start-area.green{background:linear-gradient(180deg,#4ade80,#22c55e)}
+.cell.start-area.yellow{background:linear-gradient(180deg,#fde047,#facc15);color:#392b00}
+.cell.start-area .label{
+  position:absolute;font-size:clamp(.5rem,1vw,.72rem);font-weight:900;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.32);
+  letter-spacing:.06em
+}
+.cell.start-area.yellow .label{color:#3a2c00;text-shadow:none}
+.cell.home-badge{
+  font-size:clamp(.45rem,.95vw,.65rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase
+}
+.cell.home-badge.red{background:linear-gradient(180deg,#fca5a5,#ef4444);color:#fff}
+.cell.home-badge.blue{background:linear-gradient(180deg,#93c5fd,#3b82f6);color:#fff}
+.cell.home-badge.green{background:linear-gradient(180deg,#86efac,#22c55e);color:#fff}
+.cell.home-badge.yellow{background:linear-gradient(180deg,#fde68a,#facc15);color:#3a2c00}
+
 .pawn{
-  width:64%;aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.9);
-  box-shadow:0 2px 7px rgba(0,0,0,.45),inset 0 0 0 2px rgba(0,0,0,.12);cursor:pointer;position:relative;z-index:4
+  width:64%;aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.95);
+  box-shadow:0 2px 7px rgba(0,0,0,.45),inset 0 0 0 2px rgba(0,0,0,.12);
+  cursor:pointer;position:relative;z-index:4;background-clip:padding-box
 }
-.pawn::after{
-  content:"";position:absolute;inset:23%;border-radius:50%;background:rgba(255,255,255,.28)
-}
+.pawn::after{content:"";position:absolute;inset:23%;border-radius:50%;background:rgba(255,255,255,.28)}
 .pawn.p1{background:var(--p1)} .pawn.p2{background:var(--p2)} .pawn.p3{background:var(--p3)} .pawn.p4{background:var(--p4)}
 .pawn.selectable{animation:pulse 1s infinite;outline:3px solid white;outline-offset:1px}
-.pawn.selected{transform:scale(1.13);outline:3px solid var(--accent2);outline-offset:2px}
 @keyframes pulse{50%{filter:brightness(1.35)}}
 
 .side{
@@ -125,9 +169,9 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
   .setup{grid-template-columns:1fr 1fr}.start-wrap{grid-column:1/-1;padding-top:0}.start-wrap button{width:100%}
   .scoreboard{grid-template-columns:repeat(2,minmax(0,1fr))}
   .board-shell{padding:8px;border-width:5px}
+  .board{gap:2px;padding:7px;border-radius:14px}
   .side{grid-template-columns:1fr}
   .controls{grid-template-columns:1fr}
-  .cell{font-size:.48rem}
 }
 @media(max-width:430px){
   .setup{grid-template-columns:1fr}.start-wrap{grid-column:auto}
@@ -221,15 +265,14 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
   const restartBtn = document.querySelector('#restartBtn');
 
   const faces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
-  const colors = ['p1','p2','p3','p4'];
+  const colors = ['red','blue','green','yellow'];
+  const pawnClasses = ['p1','p2','p3','p4'];
 
-  // 40 spaces around an 11x11 perimeter-ish loop.
   const track = [
     [0,5],[0,6],[0,7],[0,8],[0,9],[0,10],
     [1,10],[2,10],[3,10],[4,10],[5,10],[6,10],[7,10],[8,10],[9,10],[10,10],
     [10,9],[10,8],[10,7],[10,6],[10,5],[10,4],[10,3],[10,2],[10,1],[10,0],
-    [9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0],[0,0],
-    [0,1],[0,2],[0,3],[0,4]
+    [9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0],[0,0],[0,1],[0,2],[0,3],[0,4]
   ];
 
   const starts = [0,10,20,30];
@@ -241,11 +284,27 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
     [[7,2],[8,2],[8,3]]
   ];
 
+  const startAreaLabels = [
+    [[1,1],[1,2],[1,3],[2,1]],
+    [[1,7],[1,8],[1,9],[2,9]],
+    [[7,9],[8,9],[9,9],[9,8]],
+    [[8,1],[9,1],[9,2],[9,3]]
+  ];
+
   const homeZones = [
     [[4,4],[5,4],[6,4]],
     [[4,6],[4,5],[4,4]],
     [[6,6],[5,6],[4,6]],
     [[6,4],[6,5],[6,6]]
+  ];
+
+  const homeBadges = [[3,5],[5,7],[7,5],[5,3]];
+
+  const laneData = [
+    { color:'red', cells:[[1,5],[2,5],[3,5]], arrow:'↓', label:'HOME' },
+    { color:'blue', cells:[[5,9],[5,8],[5,7]], arrow:'←', label:'HOME' },
+    { color:'green', cells:[[9,5],[8,5],[7,5]], arrow:'↑', label:'HOME' },
+    { color:'yellow', cells:[[5,1],[5,2],[5,3]], arrow:'→', label:'HOME' }
   ];
 
   let playerCount = 4;
@@ -257,9 +316,9 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
   let winner = null;
 
   function randDie() {
-    if (crypto && crypto.getRandomValues) {
+    if (window.crypto && window.crypto.getRandomValues) {
       const a = new Uint32Array(1);
-      crypto.getRandomValues(a);
+      window.crypto.getRandomValues(a);
       return (a[0] % 6) + 1;
     }
     return Math.floor(Math.random()*6)+1;
@@ -275,6 +334,13 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
   }
 
   function cellKey(r,c){ return `${r}-${c}`; }
+
+  function getTrackColor(idx){
+    if (idx < 10) return 'red';
+    if (idx < 20) return 'blue';
+    if (idx < 30) return 'green';
+    return 'yellow';
+  }
 
   function renderBoard() {
     boardEl.innerHTML = '';
@@ -292,11 +358,27 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
 
     track.forEach(([r,c],idx)=>{
       const cell=cells.get(cellKey(r,c));
-      cell.classList.add('track');
-      if (starts.includes(idx)) cell.classList.add('safe');
+      cell.classList.add('track', getTrackColor(idx));
+      if (starts.includes(idx)) cell.classList.add('start-spot');
     });
 
-    // Center block.
+    laneData.forEach((lane, laneIdx)=>{
+      if (laneIdx >= playerCount) return;
+      lane.cells.forEach(([r,c], i)=>{
+        const cell = cells.get(cellKey(r,c));
+        cell.className = `cell lane ${lane.color}`;
+        if (i === 1) {
+          const span = document.createElement('span');
+          span.textContent = lane.label;
+          cell.appendChild(span);
+        }
+        const arrow = document.createElement('span');
+        arrow.className = 'lane-arrow';
+        arrow.textContent = lane.arrow;
+        cell.appendChild(arrow);
+      });
+    });
+
     for(let r=4;r<=6;r++){
       for(let c=4;c<=6;c++){
         const cell=cells.get(cellKey(r,c));
@@ -307,32 +389,27 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
       }
     }
 
-    // Start areas.
-    startZones.forEach((zone,p)=>{
+    startAreaLabels.forEach((zone,p)=>{
       if(p>=playerCount) return;
       zone.forEach(([r,c],i)=>{
-        const cell=cells.get(cellKey(r,c));
-        cell.classList.add('start-zone',`${colors[p]}bg`);
-        if(i===1) cell.textContent='START';
+        const cell = cells.get(cellKey(r,c));
+        cell.className = `cell start-area ${colors[p]}`;
+        if (i === 0) {
+          const label = document.createElement('span');
+          label.className = 'label';
+          label.textContent = 'START';
+          cell.appendChild(label);
+        }
       });
     });
 
-    // Home labels/cells are visualized next to center; actual pawn completion is stored in state.
-    const homeLabelPos=[[3,4],[3,6],[7,6],[7,4]];
-    homeLabelPos.forEach(([r,c],p)=>{
-      if(p>=playerCount)return;
-      const cell=cells.get(cellKey(r,c));
-      cell.classList.add('home-zone',`${colors[p]}bg`);
-      cell.textContent='HOME';
+    homeBadges.forEach(([r,c],p)=>{
+      if(p>=playerCount) return;
+      const cell = cells.get(cellKey(r,c));
+      cell.className = `cell home-badge ${colors[p]}`;
+      cell.textContent = 'HOME';
     });
 
-    // Track numbers lightly.
-    track.forEach(([r,c],idx)=>{
-      const cell=cells.get(cellKey(r,c));
-      if(!cell.textContent && idx%5===0) cell.textContent='•';
-    });
-
-    // Render pawns.
     pawns.forEach(pawn=>{
       let target=null;
       if(pawn.state==='start'){
@@ -348,7 +425,7 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
       const cell=cells.get(cellKey(target[0],target[1]));
       const btn=document.createElement('button');
       btn.type='button';
-      btn.className=`pawn ${colors[pawn.player]}`;
+      btn.className=`pawn ${pawnClasses[pawn.player]}`;
       btn.title=`Player ${pawn.player+1} pawn ${pawn.id+1}`;
 
       if(awaitingMove && pawn.player===currentPlayer && canMove(pawn,roll)){
@@ -410,7 +487,6 @@ button.action:disabled{opacity:.4;cursor:not-allowed}
       }
     }
 
-    // Bump opponents if landing on track.
     if(pawn.state==='track'){
       const idx=(starts[pawn.player]+pawn.steps)%track.length;
       pawns.forEach(other=>{
